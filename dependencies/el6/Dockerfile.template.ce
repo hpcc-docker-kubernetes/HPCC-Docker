@@ -5,8 +5,8 @@ RUN yum install -y  net-tools which psmisc
 RUN chmod u+s $(which ping)
 RUN groupadd hpcc
 RUN useradd -s /bin/bash -r -m -d /home/hpcc -g hpcc -c "hpcc Runtime User" hpcc
-RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<VERSION>/bin/platform/hpccsystems-platform-community_<FILE_NAME_SUFFIX>
-RUN yum install --nogpgcheck -y hpccsystems-platform-community_<FILE_NAME_SUFFIX>
+RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<VERSION>/bin/platform/hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
+RUN yum install --nogpgcheck -y hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
 EXPOSE 8010 8002 8015 9876
 ADD run_master.sh /tmp/
 ADD config_hpcc.sh /tmp/

@@ -17,13 +17,16 @@ usage()
    echo "  -t: tag. By default it will use fullversion and codename"
    echo "      It is useful to create a \"latest\" tag to allow update "
    echo "  -v: full version. For example: 6.0.0-rc1 or 5.6.2-1"
+   echo "  -V: HPCC Platform version. Usually \"full version\" is used for HPCC Platform"
+   echo "      But some HPCC product such as nagios, gangilia or wssql may have a differnt"
+   echo "      version than platform."
    echo ""
    exit
 }
 
 #http://10.240.32.242/builds/CE-Candidate-5.4.6/bin/platform/
-#base_url=http://cdn.hpccsystems.com/releases
-base_url=http://10.240.32.242/builds
+base_url=http://cdn.hpccsystems.com/releases
+#base_url=http://10.240.32.242/builds
 #base_url=http://10.240.32.242/builds/custom/kubernetes
 
 codename=
@@ -33,8 +36,9 @@ template=
 hpcc_docker_dir=$SCRIPT_DIR
 base_suffix=
 debug=0
+platform_version=
 
-while getopts "*b:d:Dl:p:s:t:v:" arg
+while getopts "*b:d:Dl:p:s:t:v:V:" arg
 do
     case "$arg" in
        b) base_url="$OPTARG"
@@ -52,6 +56,8 @@ do
        t) tag="$OPTARG"
           ;;
        v) fullversion="$OPTARG"
+          ;;
+       V) platform_version="$OPTARG"
           ;;
        ?) usage
           ;;
@@ -72,16 +78,23 @@ fi
 file_name_suffix=
 package_type=
 echo "Linux code name: ${codename}"
+platform_version_build_type=$platform_version
 version_build_type=$fullversion
-[ $debug -eq 1 ] && version_build_type="${fullversion}Debug"
+if [ $debug -eq 1 ] 
+then
+   version_build_type="${fullversion}Debug"
+   platform_version_build_type="${platform_version}Debug"
+fi
 case "$codename" in
    "el6" | "el7" )
      file_name_suffix="${version_build_type}.${codename}.x86_64.rpm"
+     platform_file_name_suffix="${platform_version_build_type}.${codename}.x86_64.rpm"
      [ -z "$tag" ] && tag="${version_build_type}.${codename}"
      package_type=rpm
      ;;
    "trusty" | "xenial" )
      file_name_suffix="${version_build_type}${codename}_amd64.deb"
+     platform_file_name_suffix="${platform_version_build_type}${codename}_amd64.deb"
      [ -z "$tag" ] && tag="${version_build_type}${codename}"
      package_type=deb
      ;;
@@ -91,7 +104,9 @@ esac
 
 [ -z "$base_suffix" ] && base_suffix="hpcc$(echo ${fullversion} | cut -d'.' -f1)"
 
+[ -z "$platform_version" ] && platform_version=$fullversion
 VERSION=$(echo $fullversion | cut -d'-' -f1)
+PLATFORM_VERSION=$(echo $platform_version | cut -d'-' -f1)
 
 echo "Project: ${project}, Full Version: ${version_build_type}, version: ${VERSION}, Tag: $tag"
 echo "BASE URL: $base_url"
@@ -112,8 +127,10 @@ esac
 
 sed "s|<URL_BASE>|${base_url}|g; \
      s|<PLATFORM_TYPE>|${PLATFORM_TYPE}|g; \
+     s|<PLATFORM_VERSION>|${PLATFORM_VERSION}|g; \
      s|<VERSION>|${VERSION}|g; \
      s|<BASE_SUFFIX>|${base_suffix}|g; \
+     s|<PLATFORM_FILE_NAME_SUFFIX>|${platform_file_name_suffix}|g; \
      s|<FILE_NAME_SUFFIX>|${file_name_suffix}|g"   < ${template} > Dockerfile
 
 #eval "$(docker-machine env default)"

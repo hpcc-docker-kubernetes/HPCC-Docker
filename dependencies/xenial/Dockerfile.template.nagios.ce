@@ -5,14 +5,14 @@ MAINTAINER Gleb Aronsky <gleb.aronsky@lexisnexis.com>
 
 RUN apt-get install libblas3 libatlas3-base
 
-RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<VERSION>/bin/platform/hpccsystems-platform-community_<FILE_NAME_SUFFIX>
+RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<PLATFORM_VERSION>/bin/platform/hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
 
 # hpcc-nagios
 RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<VERSION>/bin/nagios-monitoring/hpccsystems-nagios-monitoring-<FILE_NAME_SUFFIX>
 
 RUN groupadd hpcc
 RUN useradd -s /bin/bash -r -m -d /home/hpcc -g hpcc -c "hpcc Runtime User" hpcc
-RUN dpkg -i hpccsystems-platform-community_<FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
 RUN dpkg -i hpccsystems-nagios-monitoring-<FILE_NAME_SUFFIX>
 EXPOSE 8010 8002 8015 9876 80
 ADD run_master.sh /tmp/

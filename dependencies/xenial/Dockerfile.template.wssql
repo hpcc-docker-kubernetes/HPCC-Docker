@@ -5,11 +5,11 @@ MAINTAINER Xiaoming Wang <xiaoming.wang@lexisnexis.com>
 #RUN apt-get clean
 RUN apt-get update  
 RUN apt-get install -y psmisc libblas3 libatlas3-base
-RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/platform/hpccsystems-platform-community_<FILE_NAME_SUFFIX>
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/platform/hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
 RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/wssql/hpccsystems-wssql-<FILE_NAME_SUFFIX>
 RUN groupadd hpcc
 RUN useradd -s /bin/bash -r -m -d /home/hpcc -g hpcc -c "hpcc Runtime User" hpcc
-RUN dpkg -i hpccsystems-platform-community_<FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
 RUN dpkg -i hpccsystems-wssql-<FILE_NAME_SUFFIX>
 EXPOSE 8010 8002 8015 9876 8510
 ADD *.sh /tmp/
