@@ -11,7 +11,7 @@ usage()
    echo "  -d: HPCC Docker repository directory"
    echo "  -D: use debug build"
    echo "  -l: Linux codename. Supported: trusty,xenial, el7, el6."
-   echo "  -p: HPCC project name: ce or plugins. Default is ce"
+   echo "  -p: HPCC project name: ce, wssql, nagios-monitoring, plugins. Default is ce"
    echo "  -s: base linux image tag suffix. The default is hpcc<fullvesion_major>."
    echo "      hpcc5 for el7 and trusty and hpcc6 for xenial."
    echo "  -t: tag. By default it will use fullversion and codename"
@@ -66,8 +66,11 @@ done
 
 if [ -z "${base_url}" ] || [ -z "${codename}" ] || [ -z "${fullversion}" ] 
 then
+    echo "Missing required parameters nodename: $codename , fullversion: $fullversion"
     usage
 fi
+
+
 
 template=${hpcc_docker_dir}/dependencies/${codename}/Dockerfile.template.${project}
 if [ "$project" = "ce" ] || [ "$project" = "ee" ] || [ "$project" = "ln" ]
@@ -78,6 +81,7 @@ fi
 file_name_suffix=
 package_type=
 echo "Linux code name: ${codename}"
+[ -z "$platform_version" ] && platform_version=$fullversion
 platform_version_build_type=$platform_version
 version_build_type=$fullversion
 if [ $debug -eq 1 ] 
@@ -104,7 +108,6 @@ esac
 
 [ -z "$base_suffix" ] && base_suffix="hpcc$(echo ${fullversion} | cut -d'.' -f1)"
 
-[ -z "$platform_version" ] && platform_version=$fullversion
 VERSION=$(echo $fullversion | cut -d'-' -f1)
 PLATFORM_VERSION=$(echo $platform_version | cut -d'-' -f1)
 
