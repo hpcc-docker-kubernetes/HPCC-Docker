@@ -1,0 +1,76 @@
+FROM hpccsystems/linux:xenial_vm
+
+MAINTAINER Xiaoming Wang <xiaoming.wang@lexisnexis.com>
+
+
+# Install HPCC Platform
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/platform/hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
+RUN groupadd hpcc
+RUN useradd -s /bin/bash -r -m -d /home/hpcc -g hpcc -c "hpcc Runtime User" hpcc
+RUN dpkg -i hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-platform-community*.deb
+
+# Install HPCC Plugins
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-couchbaseembed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-couchbaseembed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-couchbaseembed*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-javaembed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-javaembed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-javaembed*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-kafka_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-kafka_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-kafka*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-memcached_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-memcached_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-memcached*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-mysqlembed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-mysqlembed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-mysqlembed*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-py2embed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-py2embed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-py2embed*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-py3embed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-py3embed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-py3embed*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-redis_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-redis_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-redis*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-rembed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-rembed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-rembed*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-sqlite3embed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-sqlite3embed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-sqlite3embed*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-sqs_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-sqs_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-sqs*.deb
+
+RUN wget <URL_BASE>/CE-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugins-v8embed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN dpkg -i hpccsystems-plugins-v8embed_<PLATFORM_FILE_NAME_SUFFIX>
+RUN rm -rf hpccsystems-plugins-v8embed*.deb
+
+
+
+
+# hpcc-nagios
+RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/nagios-monitoring/hpccsystems-nagios-monitoring-<FILE_NAME_SUFFIX>
+
+RUN dpkg -i hpccsystems-nagios-monitoring-<FILE_NAME_SUFFIX>
+EXPOSE 8010 8002 8015 9876 80
+ADD *.sh /tmp/
+ADD *.py /tmp/
+RUN chmod +x /tmp/*.sh
+RUN chmod +x /tmp/*.py
+RUN mkdir -p /var/run/sshd
+CMD ["bash", "-c", "sudo /usr/sbin/sshd -D"]

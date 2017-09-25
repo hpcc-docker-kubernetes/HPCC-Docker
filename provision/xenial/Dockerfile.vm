@@ -1,0 +1,48 @@
+# Use this as reference. Need to do this manually
+# There is docker image xenial_vm on Docker Hub: hpccsystems/linux:xenial_vm
+FROM hpccsystems/linux:xenial_hpcc6
+
+
+MAINTAINER Xiaoming Wang <xiaoming.wang@lexisnexis.com>
+
+RUN apt-get update
+#RUN sudo rm -rf /var/lib/apt/lists/*
+
+# HPCC Platform
+RUN apt-get install -y psmisc libblas3 libatlas3-base libmemcached11 libmemcachedutil2  --fix-missing
+RUN apt-get install -u libpython3.5 r-cran-inline libcurl3-gnutls --fix-missing
+
+
+# HPCC Platform Plugins
+RUN apt-get install -y openjdk-8-jdk libsqlite3-dev libv8-dev libmysqlclient-dev --fix-missing
+RUn apt-get install -y r-base r-cran-rcpp 
+
+
+
+
+
+# Nagios3
+RUN echo "postfix postfix/main_mailer_type string 'No Mail'" | debconf-set-selections
+RUN echo "postfix postfix/mailname string hpccsystems.com" | debconf-set-selections
+
+RUN echo "nagios3-cgi nagios3/adminpassword string nagiosadmin" | debconf-set-selections
+RUN echo "nagios3-cgi nagios3/adminpassword-repeat string nagiosadmin" | debconf-set-selections
+
+RUN apt-get install -y -q -o Acquire::Retries=5 libtiff5
+RUN apt-get install --fix-missing -y -q -o Acquire::Retries=5 apache2 libapache2-mod-php build-essential
+RUN apt-get install --fix-missing -y -o Acquire::Retries=5 libgd2-xpm-dev nagios-plugins nagios3 
+RUN apt-get install --fix-missing -y -o Acquire::Retries=5 nagios-nrpe-plugin
+# user:nagiosadmin  passwod: nagiosadmin
+
+# Ganglia
+RUN apt-get install -y -o Acquire::Retries=5 ganglia-monitor python-lxml libltdl7 libganglia1 --fix-missing
+RUN apt-get install -y -o Acquire::Retries=5 libapr1 libconfuse0 libxslt1.1 libconfuse-common ganglia-webfrontend gmetad --fix-missing
+RUN apt-get -y -f install
+RUN apt-get install -y  -o Acquire::Retries=5 collectd-core cron --fix-missing
+RUN apt-get install -y  -o Acquire::Retries=5 ganglia-monitor-python --fix-missing
+RUN apt-get -y -f install
+
+
+
+RUN mkdir -p /var/run/sshd
+CMD ["bash", "-c", "sudo /usr/sbin/sshd -D"]

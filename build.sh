@@ -25,8 +25,8 @@ usage()
 }
 
 #http://10.240.32.242/builds/CE-Candidate-5.4.6/bin/platform/
-base_url=http://cdn.hpccsystems.com/releases
-#base_url=http://10.240.32.242/builds
+#base_url=http://cdn.hpccsystems.com/releases
+base_url=http://10.240.32.242/builds
 #base_url=http://10.240.32.242/builds/custom/kubernetes
 
 codename=
@@ -72,6 +72,7 @@ fi
 
 
 
+PLATFORM_TYPE=CE
 template=${hpcc_docker_dir}/dependencies/${codename}/Dockerfile.template.${project}
 if [ "$project" = "ce" ] || [ "$project" = "ee" ] || [ "$project" = "ln" ]
 then
