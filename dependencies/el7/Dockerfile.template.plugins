@@ -2,6 +2,7 @@ FROM hpccsystems/linux:el7_<BASE_SUFFIX>
 MAINTAINER Xiaoming Wang <xiaoming.wang@lexisnexis.com>
 RUN yum update -y 
 RUN yum install -y  net-tools which blas.x86_64 atlas.x84_64
+RUN yum install -y  epel-release python34.x86_64 python34_libs.x86_64
 RUN chmod u+s $(which ping)
 RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<PLATFORM_VERSION>/bin/platform/hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
 RUN yum install --nogpgcheck -y hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
@@ -14,8 +15,10 @@ RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/plugins/hpccsystems-plugin-memcac
 RUN yum install --nogpgcheck -y hpccsystems-plugin-memcached_<FILE_NAME_SUFFIX>
 RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/plugins/hpccsystems-plugin-mysqlembed_<FILE_NAME_SUFFIX>
 RUN yum install --nogpgcheck -y hpccsystems-plugin-mysqlembed_<FILE_NAME_SUFFIX>
-RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/plugins/hpccsystems-plugin-pyembed_<FILE_NAME_SUFFIX>
-RUN yum install --nogpgcheck -y hpccsystems-plugin-pyembed_<FILE_NAME_SUFFIX>
+RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/plugins/hpccsystems-plugin-py2embed_<FILE_NAME_SUFFIX>
+RUN yum install --nogpgcheck -y hpccsystems-plugin-py2embed_<FILE_NAME_SUFFIX>
+RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/plugins/hpccsystems-plugin-py3embed_<FILE_NAME_SUFFIX>
+RUN yum install --nogpgcheck -y hpccsystems-plugin-py3embed_<FILE_NAME_SUFFIX>
 RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/plugins/hpccsystems-plugin-redis_<FILE_NAME_SUFFIX>
 RUN yum install --nogpgcheck -y hpccsystems-plugin-redis_<FILE_NAME_SUFFIX>
 RUN wget <URL_BASE>/CE-Candidate-<VERSION>/bin/plugins/hpccsystems-plugin-sqlite3embed_<FILE_NAME_SUFFIX>

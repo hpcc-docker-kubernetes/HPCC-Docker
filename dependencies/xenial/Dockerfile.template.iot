@@ -1,7 +1,16 @@
 FROM hpccsystems/linux:xenial_<BASE_SUFFIX>
 MAINTAINER Xiaoming Wang <xiaoming.wang@lexisnexis.com>
+
+RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get clean
 RUN apt-get update  
-RUN apt-get install -y psmisc libblas3 libatlas3-base vim net-tools
+
+# HPCC prerequsites and HPCC Platform and Plugins
+#------------------------------------------------
+RUN apt-get install -y psmisc  --fix-missing
+RUN apt-get install -y libblas3 libatlas3-base  --fix-missing
+RUN apt-get install -y vim net-tools unzip --fix-missing
+RUN apt-get install -y git --fix-missing
 RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<PLATFORM_VERSION>/bin/platform/hpccsystems-platform-community_<PLATFORM_FILE_NAME_SUFFIX>
 RUN groupadd hpcc
 RUN useradd -s /bin/bash -r -m -d /home/hpcc -g hpcc -c "hpcc Runtime User" hpcc
@@ -14,10 +23,33 @@ RUN chmod +x /tmp/*.py
 
 RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugin-kafka_<PLATFORM_FILE_NAME_SUFFIX>
 RUN wget <URL_BASE>/<PLATFORM_TYPE>-Candidate-<PLATFORM_VERSION>/bin/plugins/hpccsystems-plugin-couchbaseembed_<PLATFORM_FILE_NAME_SUFFIX>
-RUN wget http://10.240.32.242/data3/HPCC/IoT/stringcachelib.ecllib
 RUN dpkg -i hpccsystems-plugin-couchbaseembed_<PLATFORM_FILE_NAME_SUFFIX>
 RUN dpkg -i hpccsystems-plugin-kafka_<PLATFORM_FILE_NAME_SUFFIX>
-RUN cp stringcachelib.ecllib /opt/HPCCSystems/plugins/
+
+# HPCC-IoT
+#------------------------------------------------
+RUN echo "machine github.com login xwang2713 password Ming@0816" > /root/.netrc
+RUN git clone https://github.com/hpcc-systems/HPCC-IoT.git
+RUN rm -rf /root/.netrc
+RUN cp HPCC-IoT/Scripts/etc/cron.daily/zz_iot_delete_old_hpcc_logs.sh /etc/cron.daily/
+RUN cp HPCC-IoT/StringCacheLib/stringcachelib.ecllib /opt/HPCCSystems/plugins/
+
+# Kafka
+#------------------------------------------------
+RUN useradd -m kafka
+RUN adduser kafka sudo
+RUN apt-get install -y zookeeperd
+RUN wget http://apache.mirrors.pair.com/kafka/1.0.0/kafka_2.11-1.0.0.tgz
+RUN tar -zxvf kafka_2.11-1.0.0.tgz -C /opt
+RUN ln -s /opt/kafka_2.11-1.0.0 /opt/kafka
+
+
+
+# Couchbase Server
+#------------------------------------------------
+RUN apt-get install -y python-httplib2 --fix-missing
+RUN wget https://packages.couchbase.com/releases/5.0.1/couchbase-server-community_5.0.1-ubuntu16.04_amd64.deb
+RUN dpkg -i couchbase-server-community_5.0.1-ubuntu16.04_amd64.deb
 
 
 RUN mkdir -p /var/run/sshd

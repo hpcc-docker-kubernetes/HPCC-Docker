@@ -74,7 +74,7 @@ fi
 
 PLATFORM_TYPE=CE
 template=${hpcc_docker_dir}/dependencies/${codename}/Dockerfile.template.${project}
-if [ "$project" = "ce" ] || [ "$project" = "ee" ] || [ "$project" = "ln" ]
+if [ "$project" = "ce" ] || [ "$project" = "ee" ] || [ "$project" = "ln" ] || [ "$project" = "ce-rc" ]
 then
   PLATFORM_TYPE=$(echo $project | cut -d'-' -f1 | tr [a-z] [A-Z])
   project="platform-${project}"
